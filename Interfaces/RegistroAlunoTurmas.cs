@@ -2,7 +2,9 @@
 using Marlin_Desafio_Backend_Junior.Models;
 using Marlin_Desafio_Backend_Junior.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 
 namespace Marlin_Desafio_Backend_Junior.Interfaces
 {
@@ -14,18 +16,24 @@ namespace Marlin_Desafio_Backend_Junior.Interfaces
         {
             _context = context;
         }
-        public void CriarRegistro(Aluno aluno)
+        public  void CriarRegistro(Aluno aluno)
         {
-            RegistroAlunoTurma registroEntrada = new RegistroAlunoTurma()
-            {
-                Data = DateTime.Today,
-                Matricula = aluno.Matricula,
-                Staus = EnumRegistro.Ingressou.ToString(),
-                TurmaId = aluno.idTurma
-            };
+            var alunoAntigo =  _context.Alunos
+                                    .AsNoTracking()
+                                    .FirstOrDefault(e => e.Id == aluno.Id);
 
-            _context.Registros.Add(registroEntrada);
-            _context.SaveChanges();
+            if (alunoAntigo.idTurma != aluno.idTurma)
+            {
+                RegistroAlunoTurma registroEntrada = new RegistroAlunoTurma()
+                {
+                    Data = DateTime.Today,
+                    Matricula = aluno.Matricula,
+                    Staus = EnumRegistro.Ingressou.ToString(),
+                    TurmaId = aluno.idTurma
+                };
+                _context.Registros.Add(registroEntrada);
+                _context.SaveChanges();                
+            }           
         }
     }
 }

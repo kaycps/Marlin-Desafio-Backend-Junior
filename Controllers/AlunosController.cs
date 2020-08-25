@@ -92,16 +92,7 @@ namespace Marlin_Desafio_Backend_Junior.Controllers
             {               
                 return NotFound();
             }
-
-            var flagAluno = _context.Alunos
-                                    .AsNoTracking()
-                                    .FirstOrDefault(e => e.Id == id);
-
-            if (flagAluno.idTurma != aluno.idTurma)
-            {
-                _registroAluno.CriarRegistro(aluno);
-                
-            }                           
+            _registroAluno.CriarRegistro(aluno);
 
             _context.Entry(aluno).State = EntityState.Modified;
 
@@ -121,8 +112,7 @@ namespace Marlin_Desafio_Backend_Junior.Controllers
                 {
                     throw;
                 }
-            }
-            
+            }          
 
             return NoContent();
         }
