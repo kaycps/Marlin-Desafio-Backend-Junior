@@ -12,10 +12,6 @@ namespace Marlin_Desafio_Backend_Junior.Models
         public string Staus { get; set; }
         public string Matricula { get; set; }
         public int TurmaId { get; set; }
-
-        internal void CriarRegistro(Aluno aluno)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }
