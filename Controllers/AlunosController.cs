@@ -9,6 +9,7 @@ using Marlin_Desafio_Backend_Junior.Db;
 using Marlin_Desafio_Backend_Junior.Models;
 using Microsoft.AspNetCore.Authorization;
 using Marlin_Desafio_Backend_Junior.Services;
+using Marlin_Desafio_Backend_Junior.Interfaces;
 
 namespace Marlin_Desafio_Backend_Junior.Controllers
 {
@@ -18,10 +19,12 @@ namespace Marlin_Desafio_Backend_Junior.Controllers
     public class AlunosController : ControllerBase
     {
         private readonly ApiDbContext _context;
-
+        private readonly IRegistroAlunoTurmas _registroAluno;
         public AlunosController(ApiDbContext context)
         {
             _context = context;
+            _registroAluno = new RegistroAlunoTurmas(context);
+
         }
 
         /// <summary>
@@ -94,29 +97,18 @@ namespace Marlin_Desafio_Backend_Junior.Controllers
                                     .AsNoTracking()
                                     .FirstOrDefault(e => e.Id == id);
 
-
             if (flagAluno.idTurma != aluno.idTurma)
             {
-
-                RegistroAlunoTurma registroEntrada = new RegistroAlunoTurma()
-                {
-                    Data = DateTime.Today,
-                    Matricula = aluno.Matricula,
-                    Staus = EnumRegistro.Ingressou.ToString(),
-                    TurmaId = aluno.idTurma
-                };
-
-                _context.Registros.Add(registroEntrada);
-                _context.SaveChanges();
-
-            }
+                _registroAluno.CriarRegistro(aluno);
+                
+            }                           
 
             _context.Entry(aluno).State = EntityState.Modified;
 
-
             try
             {
-                await _context.SaveChangesAsync();               
+                
+                await _context.SaveChangesAsync();           
                 
             }
             catch (DbUpdateConcurrencyException)
@@ -129,7 +121,8 @@ namespace Marlin_Desafio_Backend_Junior.Controllers
                 {
                     throw;
                 }
-            }            
+            }
+            
 
             return NoContent();
         }
