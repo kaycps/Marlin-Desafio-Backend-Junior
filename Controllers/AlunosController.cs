@@ -92,14 +92,17 @@ namespace Marlin_Desafio_Backend_Junior.Controllers
             {               
                 return NotFound();
             }
-            _registroAluno.CriarRegistro(aluno);
+
+            if (GetAlunoId(id).idTurma != aluno.idTurma)
+            {
+                _registroAluno.CriarRegistro(aluno);
+            }            
 
             _context.Entry(aluno).State = EntityState.Modified;
 
             try
-            {
-                
-                await _context.SaveChangesAsync();           
+            {                
+                await _context.SaveChangesAsync();          
                 
             }
             catch (DbUpdateConcurrencyException)
@@ -229,6 +232,12 @@ namespace Marlin_Desafio_Backend_Junior.Controllers
         private bool AlunoExists(string matricula)
         {
             return _context.Alunos.Any(e => e.Matricula == matricula);
+        }
+
+        private Aluno GetAlunoId(int id)
+        {
+            return _context.Alunos.AsNoTracking()
+                                  .FirstOrDefault(e => e.Id == id);
         }
     }
 }

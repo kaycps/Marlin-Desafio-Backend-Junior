@@ -18,22 +18,17 @@ namespace Marlin_Desafio_Backend_Junior.Interfaces
         }
         public  void CriarRegistro(Aluno aluno)
         {
-            var alunoAntigo =  _context.Alunos
-                                    .AsNoTracking()
-                                    .FirstOrDefault(e => e.Id == aluno.Id);
-
-            if (alunoAntigo.idTurma != aluno.idTurma)
+            
+            RegistroAlunoTurma registroEntrada = new RegistroAlunoTurma()
             {
-                RegistroAlunoTurma registroEntrada = new RegistroAlunoTurma()
-                {
-                    Data = DateTime.Today,
-                    Matricula = aluno.Matricula,
-                    Staus = EnumRegistro.Ingressou.ToString(),
-                    TurmaId = aluno.idTurma
-                };
-                _context.Registros.Add(registroEntrada);
-                _context.SaveChanges();                
-            }           
+                Data = DateTime.Today,
+                Matricula = aluno.Matricula,
+                Staus = EnumRegistro.Ingressou.ToString(),
+                TurmaId = aluno.idTurma
+            };
+            _context.Registros.Add(registroEntrada);
+            _context.SaveChanges();                
+                       
         }
     }
 }
